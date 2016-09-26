@@ -14,7 +14,7 @@ include_once ( __DIR__."/function.php");
 
 register_activation_hook(__FILE__, 'activation_vp_upload_plugin');
 register_deactivation_hook(__FILE__, 'deactivation_vp_upload_plugin');
-
+register_uninstall_hook(__FILE__, 'uninstall_vp_upload_plugin');
 
 
 ?>
