@@ -64,11 +64,15 @@ function implement_vp_upload_menu()
     //формуємо підменню
     $parent_slug = $menu_url; // можна вказати імя любого пункту меню
     $page_title = 'sub_menu'; // заголовок, що відображається в закладці браузера
-    $sub_menu_title = 'item 1'; // назва підменю
-    $menu_slug = $parent_slug.'item_1'; // url підменю
+    $sub_menu_title = '_multiple'; // назва підменю
+    $menu_slug1 ='_single'; // url підменю
     $sub_function = 'vp_upload_function_sub_menu'; // функція, що відображає контент підменю
 
-    add_submenu_page( $parent_slug, $page_title, $sub_menu_title, $capability, $menu_slug, $sub_function );
+    add_submenu_page( $parent_slug, $page_title, $sub_menu_title, $capability, $menu_slug1, $sub_function );
+
+    $sub_menu_title = '_single'; // назва підменю
+    $menu_slug2 = '_multiple'; // url підменю
+    add_submenu_page( $parent_slug, $page_title, $sub_menu_title, $capability, $menu_slug2, $sub_function );
 
 }
 // робимо привʼязку: у admin_menu передаємо add_posts_page - оскільки фунція містить вхідні параметри,
@@ -77,13 +81,25 @@ function implement_vp_upload_menu()
 add_action('admin_menu', 'implement_vp_upload_menu');
 function vp_upload_function_menu()
 {
-    echo "this is my first plugin menu";
+   echo '<h1>select method upload files</h1>';
 }
 
 function vp_upload_function_sub_menu(){
-    echo "this is sub menu";
-}
 
+
+    switch ($_GET['page']) {
+        case '_multiple' :
+         $example = __DIR__ . '/view/view_example1.php';
+            break;
+        case '_single':
+            $example = __DIR__ . '/view/view_example2.php';
+            break;
+
+    }
+
+    include_once ($example);
+    vp_print_form_upload_files();
+}
 // ============ and create and registration menu +++=======================================================================
 
 
