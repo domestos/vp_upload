@@ -28,14 +28,17 @@ function activation_vp_upload_plugin()
     add_option('vp_upload_plugin', 5);
 
 }
+
 // метод запускається при деактивації плагіна
 function deactivation_vp_upload_plugin()
 {
-   // я не зннаю, що робити при деактивації:)
+    // я не зннаю, що робити при деактивації:)
 
 }
+
 // метод запускається при видаленні плагіна
-function uninstall_vp_upload_plugin(){
+function uninstall_vp_upload_plugin()
+{
     global $wpdb;
     $table_name = $wpdb->prefix . 'vp_upload_plugin';
     $sql = "DROP TABLE IF EXISTS  $table_name";
@@ -44,6 +47,7 @@ function uninstall_vp_upload_plugin(){
     // видаляємо рядок з таблиці wp_option де є 'vp_upload_plugin'
     delete_option('vp_upload_plugin');
 }
+
 // ============ end activation and deactivation =======================================================================
 
 // ============ create and registration menu +++=======================================================================
@@ -59,51 +63,71 @@ function implement_vp_upload_menu()
     $menu_icon_url = ''; // - шлях до іконки для меню
     $menu_position = 0; // - порядковий номер в меню
 
-    add_menu_page($menu_title, $menu_name, $capability, $menu_url, $menu_function , $menu_icon_url, $menu_position);
+    add_menu_page($menu_title, $menu_name, $capability, $menu_url, $menu_function, $menu_icon_url, $menu_position);
 
     //формуємо підменню
     $parent_slug = $menu_url; // можна вказати імя любого пункту меню
     $page_title = 'sub_menu'; // заголовок, що відображається в закладці браузера
-    $sub_menu_title = '_multiple'; // назва підменю
-    $menu_slug1 ='_single'; // url підменю
+    $sub_menu_title = '_single'; // назва підменю
+    $menu_slug1 = '_single'; // url підменю
     $sub_function = 'vp_upload_function_sub_menu'; // функція, що відображає контент підменю
 
-    add_submenu_page( $parent_slug, $page_title, $sub_menu_title, $capability, $menu_slug1, $sub_function );
+    add_submenu_page($parent_slug, $page_title, $sub_menu_title, $capability, $menu_slug1, $sub_function);
 
-    $sub_menu_title = '_single'; // назва підменю
+    $sub_menu_title = '_multiple'; // назва підменю
     $menu_slug2 = '_multiple'; // url підменю
-    add_submenu_page( $parent_slug, $page_title, $sub_menu_title, $capability, $menu_slug2, $sub_function );
+    add_submenu_page($parent_slug, $page_title, $sub_menu_title, $capability, $menu_slug2, $sub_function);
 
 }
+
 // робимо привʼязку: у admin_menu передаємо add_posts_page - оскільки фунція містить вхідні параметри,
 // то на пряму передати ми її не можемо,
 // для цього обертаємо її у фунцією (implement_vp_upload_menu) без вхідних параметрів
 add_action('admin_menu', 'implement_vp_upload_menu');
 function vp_upload_function_menu()
 {
-   echo '<h1>select method upload files</h1>';
+    echo '<h1>select method upload files</h1>';
+    include_once(__DIR__ . '/view/view_main.php');
 }
 
-function vp_upload_function_sub_menu(){
-
-
+function vp_upload_function_sub_menu()
+{
     switch ($_GET['page']) {
         case '_multiple' :
-         $example = __DIR__ . '/view/view_example1.php';
+            $example = __DIR__ . '/view/view_multiple.php';
             break;
         case '_single':
-            $example = __DIR__ . '/view/view_example2.php';
+            $example = __DIR__ . '/view/view_single.php';
             break;
 
     }
 
-    include_once ($example);
+    include_once($example);
     vp_print_form_upload_files();
 }
+
 // ============ and create and registration menu +++=======================================================================
 
+// ============ shortcode                        +++=======================================================================
 
 
+add_shortcode('vp_upload', 'vp_do_function_shortcode');
+
+function vp_do_function_shortcode($type)
+{
+    if ($type['type'] == "_single") {
+        echo "Single method upload file";
+        include_once (__DIR__ . '/view/view_single.php');
+        vp_print_form_upload_files();
+
+    }
+
+    if ($type['type'] == "_multiple") {
+        echo "Multiple method upload file";
+        include_once (__DIR__ . '/view/view_multiple.php');
+        vp_print_form_upload_files();
+    }
+}
 
 
 ?>
